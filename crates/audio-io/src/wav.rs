@@ -41,12 +41,18 @@ impl DiskWavReader {
         };
         let available = len.saturating_sub(layout.data_start as u64);
         layout.data_len = usize::try_from(available).unwrap_or(usize::MAX);
-        let block = layout.kind.bytes().checked_mul(usize::from(layout.info.channels)).ok_or_else(|| AudioError::Malformed("WAV block size overflow".into()))?;
+        let block = layout
+            .kind
+            .bytes()
+            .checked_mul(usize::from(layout.info.channels))
+            .ok_or_else(|| AudioError::Malformed("WAV block size overflow".into()))?;
         layout.info.frames = (layout.data_len / block) as u64;
         Ok(Self { file, layout, block })
     }
 
-    pub fn info(&self) -> &AudioInfo { &self.layout.info }
+    pub fn info(&self) -> &AudioInfo {
+        &self.layout.info
+    }
 
     /// Read at most `frames` starting at `start`, returning planar samples.
     pub fn read_frames(&mut self, start: u64, frames: usize) -> Result<AudioBuffer> {
