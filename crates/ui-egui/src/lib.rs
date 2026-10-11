@@ -11,6 +11,7 @@ pub mod docking;
 pub mod edit_window;
 pub mod extra_windows;
 pub mod fonts;
+pub mod i18n;
 pub mod icons;
 pub mod menus;
 pub mod midi_editor;
@@ -101,6 +102,13 @@ pub struct UiState {
     pub configurations: Vec<(String, Value)>,
     /// Appearance (`ui.theme`): dark by default, light or follow the system on request.
     pub theme: theme::ThemeMode,
+    /// Interface language: "auto" (follow the system) or a catalog code (see [`i18n`]).
+    #[serde(default = "language_default")]
+    pub language: String,
+}
+
+fn language_default() -> String {
+    "auto".to_string()
 }
 
 impl Default for UiState {
@@ -153,6 +161,7 @@ impl Default for UiState {
             workspace_dir: String::new(),
             configurations: Vec::new(),
             theme: theme::ThemeMode::Dark,
+            language: language_default(),
         }
     }
 }
