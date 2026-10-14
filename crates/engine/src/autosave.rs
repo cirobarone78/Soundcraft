@@ -557,13 +557,15 @@ mod tests {
             std::fs::create_dir_all(path.parent().unwrap()).unwrap();
             std::fs::write(path, bytes).unwrap();
         }
-        let mut paths: Vec<PathBuf> = files.iter().map(|(p, _)| p.clone()).collect();
+        let paths: Vec<PathBuf> = files.iter().map(|(p, _)| p.clone()).collect();
         #[cfg(unix)]
-        {
+        let paths = {
+            let mut paths = paths;
             let link = takes.join("Vox_03.wav");
             std::os::unix::fs::symlink(&files[1].0, &link).unwrap();
             paths.push(link);
-        }
+            paths
+        };
         let plan = Recording {
             start: 0,
             pass: None,
